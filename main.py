@@ -48,8 +48,6 @@ class App(tk.Tk):
         self.button_listar = tk.Button(
             self, text="Listar Peças", command=self.listar_pecas)
         self.listbox_pecas = tk.Listbox(self, width=100)
-        self.button_atualizar = tk.Button(
-            self, text="Atualizar", command=self.atualizar_peca)
         self.button_vendas = tk.Button(
             self, text="Vendas", command=self.abrir_janela_vendas)
 
@@ -67,7 +65,6 @@ class App(tk.Tk):
         self.button_adicionar.grid(row=5, column=0, padx=5, pady=5)
         self.button_listar.grid(row=5, column=1, padx=5, pady=5)
         self.listbox_pecas.grid(row=6, column=0, columnspan=2, padx=5, pady=5)
-        self.button_atualizar.grid(row=7, column=0, padx=5, pady=5)
         self.button_vendas.grid(row=7, column=1, padx=5, pady=5)
 
     def adicionar_peca(self):
@@ -106,40 +103,6 @@ class App(tk.Tk):
         for peca in pecas:
             self.listbox_pecas.insert(
                 tk.END, f"{peca[0]} - {peca[1]} - {peca[2]} - {peca[3]} - {peca[4]} - {peca[5]}")
-
-    def atualizar_peca(self):
-        selecionado = self.listbox_pecas.curselection()
-        if not selecionado:
-            messagebox.showerror(
-                "Erro", "Selecione uma peça para atualizar.")
-            return
-
-        peca_id = self.listbox_pecas.get(selecionado).split(" - ")[0]
-        nova_quantidade = self.entry_quantidade.get()
-        novo_valor = self.entry_valor.get()
-
-        if not nova_quantidade or not novo_valor:
-            messagebox.showerror(
-                "Erro", "Preencha todos os campos para atualizar a peça.")
-            return
-
-        try:
-            nova_quantidade = int(nova_quantidade)
-            novo_valor = float(novo_valor)
-        except ValueError:
-            messagebox.showerror(
-                "Erro", "Quantidade e valor devem ser números.")
-            return
-
-        self.cursor.execute("""
-            UPDATE pecas
-            SET quantidade = ?, valor = ?
-            WHERE id = ?
-        """, (nova_quantidade, novo_valor, peca_id))
-
-        self.conn.commit()
-        messagebox.showinfo("Sucesso", "Peça atualizada com sucesso.")
-        self.limpar_campos()
 
     def abrir_janela_vendas(self):
         selecionado = self.listbox_pecas.curselection()
